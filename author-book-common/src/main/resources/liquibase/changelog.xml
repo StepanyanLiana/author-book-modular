@@ -1,0 +1,74 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+
+    <changeSet id="createTables" author="lstepanyan">
+        <sql>
+            create table if not exists user
+            (
+                name     varchar(255)                          not null,
+                id       int auto_increment
+                primary key,
+                surname  varchar(255)                          not null,
+                email    varchar(255)                          not null,
+                password varchar(255)                          not null,
+                role     enum ('ADMIN', 'USER') default 'USER' not null
+                );
+
+            create table if not exists author
+            (
+                id      int auto_increment
+                primary key,
+                name    varchar(255) not null,
+                surname varchar(255) not null,
+                email   varchar(255) not null,
+                user_id int          not null,
+                constraint author_user_id_fk
+                foreign key (user_id) references user (id)
+                );
+
+            create table if not exists book
+            (
+                id           int auto_increment
+                primary key,
+                title       varchar(255)             not null,
+                description text                     null,
+                language    enum ('ARM', 'RU', 'EN') null,
+                author_id   int                      not null,
+                constraint book_author_id_fk
+                foreign key (author_id) references author (id)
+                );
+
+
+        </sql>
+    </changeSet>
+
+    <changeSet id="addSerialNumberToBook" author="lstepanyan">
+        <addColumn tableName="book">
+            <column name="serial_number" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+
+    <changeSet id="newChange" author="lstepanyan">
+        <sql>
+            create table testtest(
+                id int(11)
+            )
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="newChange1" author="lstepanyan">
+        <sql>
+            create table testtest1(
+                id int(11)
+            )
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
