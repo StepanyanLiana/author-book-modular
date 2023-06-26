@@ -53,22 +53,29 @@
         </addColumn>
     </changeSet>
 
+<changeSet id="addPriceBook" author="lstepanyan">
+    <addColumn tableName="book">
+        <column name="price_amd" type="double">
+            <constraints nullable="true"/>
+        </column>
+    </addColumn>
+</changeSet>
 
-    <changeSet id="newChange" author="lstepanyan">
-        <sql>
-            create table testtest(
-                id int(11)
-            )
-        </sql>
-    </changeSet>
-
-
-    <changeSet id="newChange1" author="lstepanyan">
-        <sql>
-            create table testtest1(
-                id int(11)
-            )
-        </sql>
+    <changeSet id="createCurrencyTable" author="lstepanyan">
+        <createTable tableName="currency">
+            <column name="id" type="int(11)" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"></constraints>
+            </column>
+            <column name="rub" type="double" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="usd" type="double">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_updated_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
     </changeSet>
 
 </databaseChangeLog>

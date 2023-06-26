@@ -15,3 +15,9 @@ spring:
 jwt:
   secret: YXNkZmYkIyNzZFNEU0RBQVNERksjQEBkc2ZqZGZrZHNqQEAjZHNmZ2ZnZmdeXiYmWipeJSQkI2RzZHMkIyVzZDQ1MDk5KUkjJCg5V0ZTSUo=
   expiration: 600000
+
+  springdoc:
+    packages-to-scan: itspace.authorbookrest.endpoint
+countries:
+  api:
+   key: 273|HlHmeugKDPgtMprcd5WVP5BNAOCQFHKLMQNhYplP
