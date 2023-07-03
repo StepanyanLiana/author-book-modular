@@ -23,4 +23,5 @@ public class Book {
     private Author author;
     private String serialNumber;
     private double priceAmd;
+    private String picName;
 }

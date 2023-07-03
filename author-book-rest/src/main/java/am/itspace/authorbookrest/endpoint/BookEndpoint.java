@@ -11,12 +11,16 @@ import am.itspace.authorbookcommon.repository.BookRepository;
 import am.itspace.authorbookcommon.repository.CurrencyRepository;
 import am.itspace.authorbookrest.util.RoundUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpMethod;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +34,10 @@ public class BookEndpoint {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
     private final CurrencyRepository currencyRepository;
+    @Value("${upload.image.path}")
+    private String uploadPath;
+    @Value("${site.url}")
+    private String siteUrl;
 
     @PostMapping
     public ResponseEntity<BookDto> create(@RequestBody CreateBookRequestDto createBookRequestDto) {
@@ -41,8 +49,37 @@ public class BookEndpoint {
         saved.setAuthor(byId.get());
         return ResponseEntity.ok(bookMapper.mapToDto(saved));
     }
+    @PostMapping("/{id}/image")
+    public ResponseEntity<BookDto> uploadImage(@PathVariable("id") int bookId,
+            @RequestParam("image") MultipartFile multipartFile) throws IOException {
+        Optional<Book> bookOptional = bookRepository.findById(bookId);
+        if (!multipartFile.isEmpty() && bookOptional.isPresent()) {
+            String originalFilename = multipartFile.getOriginalFilename();
+            String picName = System.currentTimeMillis() + "_" + originalFilename;
+            File file = new File(uploadPath + picName);
+            multipartFile.transferTo(file);
+            Book book = bookOptional.get();
+            book.setPicName(picName);
+            bookRepository.save(book);
+            BookDto bookDto = bookMapper.mapToDto(book);
+            //bookDto.setPicUrl(siteUrl + "/books/getImage?picName=" + picName);
+            return ResponseEntity.ok(bookDto);
+        }
+        return ResponseEntity.badRequest().build();
+    }
 
-    @GetMapping
+    @GetMapping(value = "/getImage",
+    produces = MediaType.IMAGE_JPEG_VALUE)
+    public @ResponseBody byte[] getImage(@RequestParam("picName") String picName) throws IOException {
+        File file = new File(uploadPath + picName);
+        if (file.exists()) {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            return IOUtils.toByteArray(fileInputStream);
+        }
+        return null;
+    }
+
+                                                     @GetMapping
     public ResponseEntity<List<BookDto>> getAll() {
         List<Book> all = bookRepository.findAll();
         List<BookDto> bookDtos = bookMapper.mapListToDtos(all);

@@ -36,6 +36,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/countries").permitAll()
                 .requestMatchers(HttpMethod.POST,"/user/auth").permitAll()
                 .requestMatchers(HttpMethod.POST,"/user/register").permitAll()
+                .requestMatchers("/books/getImage/**").permitAll()
                 .requestMatchers(HttpMethod.GET,"/author/**").authenticated()
                 //.requestMatchers(HttpMethod.GET,"/books/**").authenticated()
                // .requestMatchers(HttpMethod.POST, "/author/**").hasAnyAuthority("ADMIN")

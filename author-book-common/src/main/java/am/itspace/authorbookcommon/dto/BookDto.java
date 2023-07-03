@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class BookDto {
     private int id;
     private String description;
+    private String picUrl;
     private Language language;
     private AuthorDto authorDto;
     private double priceAmd;
