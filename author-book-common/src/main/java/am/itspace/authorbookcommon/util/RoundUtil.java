@@ -1,4 +1,4 @@
-package am.itspace.authorbookrest.util;
+package am.itspace.authorbookcommon.util;
 
 import lombok.experimental.UtilityClass;
 

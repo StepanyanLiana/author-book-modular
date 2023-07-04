@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookDto {
     private int id;
+    private String title;
     private String description;
     private String picUrl;
     private Language language;

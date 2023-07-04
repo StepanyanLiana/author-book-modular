@@ -1,15 +1,15 @@
 package am.itspace.authorbookrest.endpoint;
 
 import am.itspace.authorbookcommon.dto.BookDto;
+import am.itspace.authorbookcommon.dto.BookSearchDto;
 import am.itspace.authorbookcommon.dto.CreateBookRequestDto;
 import am.itspace.authorbookcommon.entity.Author;
 import am.itspace.authorbookcommon.entity.Book;
-import am.itspace.authorbookcommon.entity.Currency;
 import am.itspace.authorbookcommon.mapper.BookMapper;
 import am.itspace.authorbookcommon.repository.AuthorRepository;
 import am.itspace.authorbookcommon.repository.BookRepository;
 import am.itspace.authorbookcommon.repository.CurrencyRepository;
-import am.itspace.authorbookrest.util.RoundUtil;
+import am.itspace.authorbookcommon.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +33,7 @@ public class BookEndpoint {
     private final AuthorRepository authorRepository;
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final BookService bookService;
     private final CurrencyRepository currencyRepository;
     @Value("${upload.image.path}")
     private String uploadPath;
@@ -79,20 +80,12 @@ public class BookEndpoint {
         return null;
     }
 
-                                                     @GetMapping
-    public ResponseEntity<List<BookDto>> getAll() {
-        List<Book> all = bookRepository.findAll();
-        List<BookDto> bookDtos = bookMapper.mapListToDtos(all);
-        List<Currency> currencies = currencyRepository.findAll();
-        if (!currencies.isEmpty()) {
-            Currency currency = currencies.get(0);
-            for (BookDto bookDto : bookDtos) {
-                double priceAmd = bookDto.getPriceAmd();
-                bookDto.setPriceRub(RoundUtil.round(priceAmd/currency.getRub(), 2));
-                bookDto.setPriceUsd(RoundUtil.round(priceAmd/currency.getUsd(), 1));
-            }
-            }
-        return ResponseEntity.ok(bookDtos);
+    @PostMapping("/search")
+    public ResponseEntity<List<BookDto>> getAll(@RequestParam(value = "size", defaultValue = "20") int size,
+                                                @RequestParam(value = "page", defaultValue = "0") int page,
+                                                @RequestBody BookSearchDto bookSearchDto) {
+
+        return ResponseEntity.ok(bookService.search(page, size, bookSearchDto));
     }
 
 
